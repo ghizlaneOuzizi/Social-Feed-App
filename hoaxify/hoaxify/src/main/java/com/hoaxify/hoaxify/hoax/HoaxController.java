@@ -50,12 +50,12 @@ public class HoaxController {
 			@PathVariable(required=false) String username, Pageable pageable,
 			@RequestParam(name="direction", defaultValue="after") String direction,
 			@RequestParam(name="count", defaultValue="false", required=false) boolean count) {
-		if(direction.equalsIgnoreCase("after")) {
-			return ResponseEntity.ok(hoaxService.getOldHoaxes(id, username, pageable).map(HoaxVM::new));
-		}
-		if(count == true) {
+		if(direction.equalsIgnoreCase("after") && count == true) {
 			long newHoaxCount = hoaxService.getHoaxesCount(id, username);
 			return ResponseEntity.ok(Collections.singletonMap("count", newHoaxCount));
+		}
+		if(direction.equalsIgnoreCase("before")) {
+			return ResponseEntity.ok(hoaxService.getOldHoaxes(id, username, pageable).map(HoaxVM::new)); 
 		}
 		List<HoaxVM> newHoaxes = hoaxService.getNewHoaxers(id, username,pageable).stream()
 				                 .map(HoaxVM::new)
