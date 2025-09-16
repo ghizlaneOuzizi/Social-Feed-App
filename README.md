@@ -60,7 +60,3 @@ Writing a failing test.
 Implementing the feature.
 
 Refactoring for clean, maintainable code.
-
-### 📄 License
-
-This project is for learning purposes.
