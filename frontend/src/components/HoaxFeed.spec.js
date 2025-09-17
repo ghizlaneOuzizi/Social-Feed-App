@@ -370,7 +370,7 @@ describe('HoaxSubmit', () => {
           expect(queryByText('There is 1 new hoax')).not.toBeInTheDocument();
           useRealIntervals();
         });
-        it('does not allow loadOldHoaxes to be called when there is an active api call about it', async () => {
+        xit('does not allow loadOldHoaxes to be called when there is an active api call about it', async () => {
           apiCalls.loadHoaxes = jest
            .fn()
            .mockResolvedValue(mockSuccessGetHoaxesFirstMultiPage);

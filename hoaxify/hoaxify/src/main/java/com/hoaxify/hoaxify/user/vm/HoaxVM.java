@@ -1,5 +1,6 @@
 package com.hoaxify.hoaxify.user.vm;
 
+import com.hoaxify.hoaxify.file.FileAttachmentVM;
 import com.hoaxify.hoaxify.hoax.Hoax;
 
 import lombok.Data;
@@ -17,11 +18,16 @@ public class HoaxVM {
 	
 	private UserVM user;
 	
+	private FileAttachmentVM attachement;
+	
 	public HoaxVM(Hoax hoax) {
 		this.setId(hoax.getId());
 		this.setContent(hoax.getContent());
 		this.setDate(hoax.getTimesStamp().getTime());
 		this.setUser(new UserVM(hoax.getUser()));
+		if(hoax.getAttachement() != null) {
+			this.setAttachement(attachement);
+		}
 	}
 
 }

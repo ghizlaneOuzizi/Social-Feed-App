@@ -3,6 +3,7 @@ package com.hoaxify.hoaxify.hoax;
 import java.util.Date;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.hoaxify.hoaxify.file.FileAttachment;
 import com.hoaxify.hoaxify.user.User;
 
 import jakarta.persistence.Column;
@@ -10,6 +11,7 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.Id;
 import jakarta.persistence.ManyToOne;
+import jakarta.persistence.OneToOne;
 import jakarta.persistence.Table;
 import jakarta.persistence.Temporal;
 import jakarta.persistence.TemporalType;
@@ -36,5 +38,8 @@ public class Hoax {
 	@ManyToOne
 	@JsonIgnore
 	private User user;
+	
+	@OneToOne
+	private FileAttachment attachement;
 
 }

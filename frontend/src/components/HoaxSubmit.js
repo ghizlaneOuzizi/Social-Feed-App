@@ -4,10 +4,15 @@ import { connect } from "react-redux";
 import { FaTimes } from "react-icons/fa";
 import * as apiCalls from '../api/apiCalls';
 import ButtonWithProgress from "./ButtonWithProgress";
+import Input from "./input"
 class HoaxSubmit extends Component {
     state = {
         focused: false,
-        errors: {}
+        errors: {},
+        file: undefined,
+        image: undefined,
+        pendingApiCall : false,
+        content:undefined
     }
     onFocus = () => {
         this.setState({
@@ -76,7 +81,12 @@ class HoaxSubmit extends Component {
                          {this.state.errors.content}
                     </span>
                  )}
-                { this.state.focused && <div className="d-flex justify-content-end mt-1">
+                { this.state.focused &&
+                 <div>
+                    <div className="file">
+                       <Input type = "file"/>
+                    </div>
+                  <div className="d-flex justify-content-end mt-1">
                     <ButtonWithProgress
                             className="btn btn-success"
                             onClick={this.onClickHoaxify}
@@ -92,6 +102,7 @@ class HoaxSubmit extends Component {
                         <FaTimes />
                         Cancel
                     </button>
+                 </div>
                  </div>
                 }
               </div>
