@@ -46,8 +46,6 @@ class HoaxFeed extends React.Component{
           .loadNewHoaxCount(topHoaxId, this.props.user)
           .then(response => {
             this.setState({ newHoaxCount : response.data.count })
-            console.log("API response", response.data);
-
           })
     }
 
@@ -79,7 +77,6 @@ class HoaxFeed extends React.Component{
             const page = { ...this.state.page };
             page.content = [...hoaxes, ...newContent];
             page.last = isLast;
-            console.log(response.data);
 
             this.setState({ page, isLoadingOldHoaxes: false });
           }).catch((error) =>{
@@ -103,7 +100,6 @@ class HoaxFeed extends React.Component{
         apiCalls.loadNewHoaxes(topHoaxId, this.props.user)
         .then((response) => {
             const page = { ...this.state.page };
-            console.log(response.data.content);
             page.content = [...response.data, ...page.content];
             this.setState({ page, newHoaxCount : 0, isLoadingNewHoaxes : false });
         }).catch((error) => {
@@ -135,6 +131,7 @@ class HoaxFeed extends React.Component{
         const newHoaxCountMessage = this.state.newHoaxCount === 1
                    ? 'There is 1 new hoax'
                    : `There are ${this.state.newHoaxCount} new hoaxes`;
+
         return (<div>
             { this.state.newHoaxCount > 0 && (
                 <div className="card card-header text-center"

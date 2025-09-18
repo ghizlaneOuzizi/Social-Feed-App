@@ -12,8 +12,20 @@ class HoaxSubmit extends Component {
         file: undefined,
         image: undefined,
         pendingApiCall : false,
-        content:undefined
-    }
+        content:undefined,
+        attachment : undefined
+    };
+    resetState = () => {
+      this.setState({
+        pendingApiCall: false,
+        focused: false,
+        content: '',
+        errors: {},
+        image: undefined,
+        file: undefined,
+        attachment: undefined
+       });
+    };
     onFocus = () => {
         this.setState({
             focused: true,
@@ -22,29 +34,50 @@ class HoaxSubmit extends Component {
         });
     };
 
+    onFileSelect = (event) => {
+        if (event.target.files.length === 0) {
+          return;
+        }
+
+        const file = event.target.files[0];
+        const reader = new FileReader();
+
+        reader.onloadend = () => {
+          this.setState({
+              image: reader.result,
+              file
+          }, () => {
+            this.uploadFile()
+          });
+        };
+    reader.readAsDataURL(file);
+
+    };
+
+    uploadFile = () => {
+        const body = new FormData();
+        body.append('file', this.state.file);
+        apiCalls.postHoaxFile(body).then((response) => {
+            console.log("Upload finished. Response:", response.data);
+            this.setState({ attachment : response.data}, () => {
+             console.log("State after upload:", this.state.attachment);
+        });
+        });
+    };
     onChangeContent = (event)=>{
         const value = event.target.value;
         this.setState({content: value, errors: {}})
     }
-    onClickCancel = () => {
-         this.setState({
-            focused: false,
-            content: '',
-            errors : {}
-        });
-    }
     onClickHoaxify = () => {
         const body = {
-            content: this.state.content
+            content: this.state.content,
+            attachement : this.state.attachment
         };
         this.setState({pendingApiCall : true})
         apiCalls.postHoax(body)
                 .then((response)=>{
-                    this.setState({
-                        focused: false,
-                        content: '',
-                        pendingApiCall : false
-                    });
+                   console.log(response.data);
+                   this.resetState();
                 })
                 .catch((error) => {
                     let errors ={};
@@ -84,19 +117,28 @@ class HoaxSubmit extends Component {
                 { this.state.focused &&
                  <div>
                     <div className="file">
-                       <Input type = "file"/>
+                       <Input type = "file" onChange={this.onFileSelect}/>
+                       {this.state.image && (
+                         <img
+                           className="mt-1 img-thumbnail"
+                           src={this.state.image}
+                           alt="upload"
+                           width="128"
+                           height="64"
+                         />
+                       )}
                     </div>
                   <div className="d-flex justify-content-end mt-1">
                     <ButtonWithProgress
                             className="btn btn-success"
                             onClick={this.onClickHoaxify}
-                            disabled = {this.state.pendingApiCall}
+                            disabled = {this.state.pendingApiCall  || (this.state.file && !this.state.attachment)}
                             pendingApiCall={this.state.pendingApiCall}
                             text="Hoaxify"
                             />
                     <button
                       className="btn btn-light ml-2"
-                      onClick={this.onClickCancel}
+                      onClick={this.resetState}
                       disabled = {this.state.pendingApiCall}
                       >
                         <FaTimes />

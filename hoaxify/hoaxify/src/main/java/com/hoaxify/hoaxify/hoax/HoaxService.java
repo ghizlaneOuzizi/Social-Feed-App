@@ -25,12 +25,13 @@ public class HoaxService {
 		this.userService = userService;
 		this.fileAttachementRepository = fileAttachementRepository;
 	}
-
+	
 	public Hoax save(User user, Hoax hoax) {
 		hoax.setTimesStamp(new Date());
 		hoax.setUser(user);
 		if(hoax.getAttachement() != null) {
-			FileAttachment inDB = fileAttachementRepository.findById(hoax.getAttachement().getId()).get();
+			FileAttachment inDB = fileAttachementRepository.findById(hoax.getAttachement().getId())
+					.orElseThrow(() -> new RuntimeException("Attachment not found"));
 			inDB.setHoax(hoax);
 			hoax.setAttachement(inDB);
 		}

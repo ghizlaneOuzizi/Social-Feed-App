@@ -26,7 +26,7 @@ public class HoaxVM {
 		this.setDate(hoax.getTimesStamp().getTime());
 		this.setUser(new UserVM(hoax.getUser()));
 		if(hoax.getAttachement() != null) {
-			this.setAttachement(attachement);
+			this.setAttachement(new FileAttachmentVM(hoax.getAttachement()));
 		}
 	}
 

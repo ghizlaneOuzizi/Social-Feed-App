@@ -30,11 +30,11 @@ public class HoaxifyApplication {
 		       // user.setUsername("user" + i);
 		       // user.setDisplayName("display" + i);
 		       // user.setPassword("P4ssword");
-		      //  return user;
-		    // })
-		    // .forEach(userService::save);
+		       // return user;
+		     //})
+		     //.forEach(userService::save);
 			
-	//	};
+		//};
 	//}
 
 }

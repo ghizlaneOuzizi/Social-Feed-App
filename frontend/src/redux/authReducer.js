@@ -8,7 +8,7 @@ const initalState = {
 };
 
 export default function authReducer(state = initalState, action){
-   if(action.type == 'Logout-success'){
+   if(action.type === 'Logout-success'){
     return { ...initalState };
    }
    else if(action.type === 'Login-success'){
