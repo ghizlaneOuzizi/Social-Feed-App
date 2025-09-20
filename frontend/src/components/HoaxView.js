@@ -2,14 +2,17 @@ import React, { Component } from 'react'
 import ProfileImageWithDefault from "./ProfileImageWithDefault";
 import { format } from 'timeago.js';
 import { Link } from 'react-router-dom';
-export default class HoaxView extends Component {
+import { FaTrash } from 'react-icons/fa';
+import { connect } from 'react-redux';
+class HoaxView extends Component {
   render() {
-    const { hoax } = this.props;
+    const { hoax, onClickDelete } = this.props;
     const { user, date } = hoax;
     const { username, displayName, image} = user;
     const relativeDate = format(date);
     const attachmentImageVisible =
     hoax.attachement && hoax.attachement.fileType.startsWith('image');
+    const ownedByLoggedInUser = user.id === this.props.loggedInUser.id;
 
     return (
       <div className='card p-1'>
@@ -28,18 +31,33 @@ export default class HoaxView extends Component {
             <span className='text-black-50'> - </span>
             <span className='text-black-50'>{relativeDate}</span>
           </div>
+          {ownedByLoggedInUser && (
+            <button
+                className="btn btn-outline-danger btn-sm btn-block text-left"
+                onClick={onClickDelete}
+              >
+                <FaTrash /> Delete
+            </button>
+          )}
         </div>
         <div className='pl-5'>{hoax.content}</div>
-        {attachmentImageVisible && (
-        <div className="pl-5">
-          <img
-            alt="attachment"
-            src={`/images/attachements/${hoax.attachement.name}`}
-            className="img-fluid"
-          />
-        </div>
-      )}
+         {attachmentImageVisible && (
+         <div className="pl-5">
+           <img
+             alt="attachment"
+             src={`/images/attachements/${hoax.attachement.name}`}
+             className="img-fluid"
+           />
+         </div>
+         )}
         </div>
     )
   }
 }
+const mapStateToProps = (state) => {
+  return {
+    loggedInUser: state,
+  };
+};
+
+export default connect(mapStateToProps)(HoaxView);

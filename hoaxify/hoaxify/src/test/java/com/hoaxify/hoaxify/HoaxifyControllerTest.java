@@ -8,6 +8,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import java.io.File;
 import java.io.IOException;
 import java.util.Map;
+import java.util.Optional;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
@@ -38,6 +39,7 @@ import com.hoaxify.hoaxify.file.FileService;
 import com.hoaxify.hoaxify.hoax.Hoax;
 import com.hoaxify.hoaxify.hoax.HoaxRepository;
 import com.hoaxify.hoaxify.hoax.HoaxService;
+import com.hoaxify.hoaxify.shared.GenericResponse;
 import com.hoaxify.hoaxify.user.User;
 import com.hoaxify.hoaxify.user.UserRepository;
 import com.hoaxify.hoaxify.user.UserService;
@@ -76,6 +78,7 @@ public class HoaxifyControllerTest {
 	
 	@BeforeEach
 	public void cleanup() throws IOException {
+		fileAttachmentRepository.deleteAll();
 		hoaxRepository.deleteAll();
 		userRepository.deleteAll();
 		testRestTemplate.getRestTemplate().getInterceptors().clear();
@@ -200,7 +203,7 @@ public class HoaxifyControllerTest {
 		ResponseEntity<Object> response = getOldHoaxes(5, new ParameterizedTypeReference<Object>() {} );
 		assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK); 
 	}
-	/* @Test
+	@Test
 	 public void getOldHoaxes_whenThereAreHoaxes_receivePageWithItemsBeforeProvidedId() {
 		User user = userService.save(UserUtil.createValidUser("user1"));
 		hoaxService.save(user, UserUtil.createValidHoax());
@@ -211,9 +214,9 @@ public class HoaxifyControllerTest {
 		
 		ResponseEntity<TestPage<Object>> response = getOldHoaxes(fourth.getId(), new ParameterizedTypeReference<TestPage<Object>>() {});
 		assertThat(response.getBody().getTotalElements()).isEqualTo(3);
-	}*/
+	}
 	
-	/*@Test
+	@Test
 	public void getOldHoaxes_whenThereAreHoaxes_receivePageWithHoaxVMBeforeProvidedId() {
 		User user = userService.save(UserUtil.createValidUser("user1"));
 		hoaxService.save(user, UserUtil.createValidHoax());
@@ -224,7 +227,7 @@ public class HoaxifyControllerTest {
 		
 		ResponseEntity<TestPage<HoaxVM>> response = getOldHoaxes(fourth.getId(), new ParameterizedTypeReference<TestPage<HoaxVM>>() {});
 		assertThat(response.getBody().getContent().get(0).getDate()).isGreaterThan(0);
-	}*/
+	}
 
 	@Test
 	public void getOldHoaxesOfUser_whenUserExistThereAreNoHoaxes_receiveOk() {
@@ -232,7 +235,8 @@ public class HoaxifyControllerTest {
 		ResponseEntity<Object> response = getOldHoaxesOfUser(5, "user1", new ParameterizedTypeReference<Object>() {});
 		assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
 	}
- /* @Test
+   
+	@Test
 	public void getOldHoaxesOfUser_whenUserExistAndThereAreHoaxes_receivePageWithItemsBeforeProvidedId() {
 		User user = userService.save(UserUtil.createValidUser("user1"));
 		hoaxService.save(user, UserUtil.createValidHoax());
@@ -244,8 +248,8 @@ public class HoaxifyControllerTest {
 		ResponseEntity<TestPage<Object>> response = getOldHoaxesOfUser(fourth.getId(), "user1", new ParameterizedTypeReference<TestPage<Object>>() {});
 		assertThat(response.getBody().getTotalElements()).isEqualTo(3);
 	}
-*/	
-   /*@Test
+	
+    @Test
 	public void getOldHoaxesOfUser_whenUserExistAndThereAreHoaxes_receivePageWithHoaxVMBeforeProvidedId() {
 		User user = userService.save(UserUtil.createValidUser("user1"));
 		hoaxService.save(user, UserUtil.createValidHoax());
@@ -257,8 +261,8 @@ public class HoaxifyControllerTest {
 		ResponseEntity<TestPage<HoaxVM>> response = getOldHoaxesOfUser(fourth.getId(), "user1", new ParameterizedTypeReference<TestPage<HoaxVM>>() {});
 		assertThat(response.getBody().getContent().get(0).getDate()).isGreaterThan(0);
 	    }
-	*/
-  /*@Test
+	
+    @Test
 	public void getOldHoaxesOfUser_whenUserExistAndThereAreNoHoaxes_receivePageWithZeroItemsBeforeProvidedId() {
 		User user = userService.save(UserUtil.createValidUser("user1"));
 		hoaxService.save(user, UserUtil.createValidHoax());
@@ -272,7 +276,7 @@ public class HoaxifyControllerTest {
 		ResponseEntity<TestPage<HoaxVM>> response = getOldHoaxesOfUser(fourth.getId(), "user2", new ParameterizedTypeReference<TestPage<HoaxVM>>() {});
 		assertThat(response.getBody().getTotalElements()).isEqualTo(0);
 	}
-*/
+
 	@Test
 	public void getNewHoaxCount_whenThereAreHoaxes_receiveCountAfterProvidedId() {
 		User user = userService.save(UserUtil.createValidUser("user1"));
@@ -319,6 +323,99 @@ public class HoaxifyControllerTest {
 		assertThat(response.getBody().getAttachement().getName()).isEqualTo(savedFile.getName());
 	}
 	
+	@Test
+	public void deleteHoax_whenUserIsUnAuthorized_receiveUnauthorized() {
+		ResponseEntity<Object> response = deleteHoax(555, Object.class);
+		assertThat(response.getStatusCode()).isEqualTo(HttpStatus.UNAUTHORIZED);
+	}
+	
+	@Test
+	public void deleteHoax_whenUserIsAuthorized_receiveOk() {
+		User user = userService.save(UserUtil.createValidUser("user1"));
+		authenticate("user1");
+		Hoax hoax = hoaxService.save(user, UserUtil.createValidHoax());
+
+		ResponseEntity<Object> response = deleteHoax(hoax.getId(), Object.class);
+		assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
+		
+	}
+	
+	@Test
+	public void deleteHoax_whenUserIsAuthorized_receiveGenericResponse() {
+		User user = userService.save(UserUtil.createValidUser("user1"));
+		authenticate("user1");
+		Hoax hoax = hoaxService.save(user, UserUtil.createValidHoax());
+
+		ResponseEntity<GenericResponse> response = deleteHoax(hoax.getId(), GenericResponse.class);
+		assertThat(response.getBody().getMessage()).isNotNull();
+		
+	}
+	
+	@Test
+	public void deleteHoax_whenUserIsAuthorized_hoaxRemovedFromDatabase() {
+		User user = userService.save(UserUtil.createValidUser("user1"));
+		authenticate("user1");
+		Hoax hoax = hoaxService.save(user, UserUtil.createValidHoax());
+
+		deleteHoax(hoax.getId(), Object.class);
+		Optional<Hoax> inDB = hoaxRepository.findById(hoax.getId());
+		assertThat(inDB.isPresent()).isFalse();
+		
+	}
+	
+	@Test
+	public void deleteHoax_whenHoaxIsOwnedByAnotherUser_receiveForbidden() {
+		userService.save(UserUtil.createValidUser("user1"));
+		authenticate("user1");
+		User hoaxOwner = userService.save(UserUtil.createValidUser("hoax-owner"));
+		Hoax hoax = hoaxService.save(hoaxOwner, UserUtil.createValidHoax());
+
+		ResponseEntity<Object> response = deleteHoax(hoax.getId(), Object.class);
+		assertThat(response.getStatusCode()).isEqualTo(HttpStatus.FORBIDDEN);
+		
+	}
+	@Test
+	public void deleteHoax_whenHoaxHasAttachment_attachmentRemovedFromDatabase() throws IOException {
+		userService.save(UserUtil.createValidUser("user1"));
+		authenticate("user1");
+		
+		MultipartFile file = createFile();
+		
+		FileAttachment savedFile = fileService.saveAttachement(file);
+		
+		Hoax hoax = UserUtil.createValidHoax();
+		hoax.setAttachement(savedFile);
+		ResponseEntity<HoaxVM> response = postHoax(hoax, HoaxVM.class);
+		
+		long hoaxId = response.getBody().getId();
+		
+		deleteHoax(hoaxId, Object.class);
+		
+		Optional<FileAttachment> optionalAttachment = fileAttachmentRepository.findById(savedFile.getId());
+		
+		assertThat(optionalAttachment.isPresent()).isFalse();
+	}
+	@Test
+	public void deleteHoax_whenHoaxHasAttachment_attachmentRemovedFromStorage() throws IOException {
+		userService.save(UserUtil.createValidUser("user1"));
+		authenticate("user1");
+		
+		MultipartFile file = createFile();
+		
+		FileAttachment savedFile = fileService.saveAttachement(file);
+		
+		Hoax hoax = UserUtil.createValidHoax();
+		hoax.setAttachement(savedFile);
+		ResponseEntity<HoaxVM> response = postHoax(hoax, HoaxVM.class);
+		
+		long hoaxId = response.getBody().getId();
+		
+		deleteHoax(hoaxId, Object.class);
+		String attachmentFolderPath = appConfiguration.getFullAttachementsPath() + "/" + savedFile.getName();
+		File storedImage = new File(attachmentFolderPath);
+		assertThat(storedImage.exists()).isFalse();
+	}
+
 	private MultipartFile createFile() throws IOException {
 		ClassPathResource imageResource = new ClassPathResource("profile.png");
 		byte[] fileAsByte = FileUtils.readFileToByteArray(imageResource.getFile());
@@ -326,8 +423,11 @@ public class HoaxifyControllerTest {
 		MultipartFile file = new MockMultipartFile("profile.png", fileAsByte);
 		return file;
 	}
+	public <T> ResponseEntity<T> deleteHoax(long hoaxId, Class<T> responseType){
+		return testRestTemplate.exchange(API_1_0_HOAXES + "/" + hoaxId, HttpMethod.DELETE, null, responseType);
+	}
 	private <T> ResponseEntity<T> getNewHoaxeCount(long hoaxId,ParameterizedTypeReference<T> responseType) {
-		String path = API_1_0_HOAXES + "/" + hoaxId + "?direction=aftere&count=true";
+		String path = API_1_0_HOAXES + "/" + hoaxId + "?direction=after&count=true";
 		return testRestTemplate.exchange(path, HttpMethod.GET, null, responseType);
 	}
 	private <T> ResponseEntity<T> getOldHoaxes(long hoaxId,ParameterizedTypeReference<T> responseType) {
@@ -352,7 +452,7 @@ public class HoaxifyControllerTest {
 	
 	@AfterEach
 	public void cleanupAfter() {
-		fileAttachmentRepository.deleteAll();
 		hoaxRepository.deleteAll();
+		fileAttachmentRepository.deleteAll();
 	}
 }

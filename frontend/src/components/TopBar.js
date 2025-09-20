@@ -103,7 +103,7 @@ class TopBar extends React.Component{
               <div className='container'>
                 <nav className='navbar navbar-light navbar-expand'>
                 <Link to='/' className="navbar-brand">
-                 <img src={logo} width='60' alt='Hoaxify'/> Hoaxify
+                 <img src={logo} width='60' alt='Hoaxify'/> BuzzConnect
                 </Link>
                 {links}
                 </nav>

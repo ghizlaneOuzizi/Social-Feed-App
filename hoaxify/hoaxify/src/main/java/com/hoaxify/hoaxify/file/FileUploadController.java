@@ -1,7 +1,5 @@
 package com.hoaxify.hoaxify.file;
 
-import java.util.Date;
-import java.util.UUID;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.PostMapping;

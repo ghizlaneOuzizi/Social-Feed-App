@@ -42,7 +42,7 @@ public class Hoax {
 	@JsonIgnore
 	private User user;
 	
-	@OneToOne(fetch = FetchType.LAZY)
+	@OneToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
 	@JoinColumn(name = "attachement_id") 
 	private FileAttachment attachement;
 

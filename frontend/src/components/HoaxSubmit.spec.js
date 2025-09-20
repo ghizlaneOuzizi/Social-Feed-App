@@ -19,7 +19,7 @@ const setup = (state = defaultState) => {
     store = createStore(authReducer, state);
     return render (
        <Provider store={store}>
-          <HoaxSubmit/>
+          <HoaxSubmit />
         </Provider>
     );
 }
@@ -64,12 +64,12 @@ describe('HoaxSubmit', () => {
             expect(queryByText('Cancel')).not.toBeInTheDocument();
         });
         it("calls postHoax with hoax request Object when clicking hoaxify", () => {
+            apiCalls.postHoax = jest.fn().mockResolvedValue({});
             const { container, queryByText} = setup();
             const textArea = container.querySelector('textarea');
             fireEvent.focus(textArea);
             fireEvent.change(textArea, { target: { value: "Test hoax content"}})
             const hoaxifyButton = queryByText('Hoaxify');
-            apiCalls.postHoax = jest.fn().mockResolvedValue({});
             fireEvent.click(hoaxifyButton);
             expect(apiCalls.postHoax).toHaveBeenCalledWith({
                 content: 'Test hoax content'
@@ -262,7 +262,7 @@ describe('HoaxSubmit', () => {
 
             expect(apiCalls.postHoax).toHaveBeenCalledWith({
             content: 'Test hoax content',
-            attachment: {
+            attachement: {
               id: 1,
               name: 'random-name.png',
              },

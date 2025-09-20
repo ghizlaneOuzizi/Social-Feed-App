@@ -2,6 +2,7 @@ import React from "react";
 import * as apiCalls from '../api/apiCalls';
 import Spinner from './Spinner';
 import HoaxView from "./HoaxView";
+import Modal from "./Modal";
 class HoaxFeed extends React.Component{
 
     state = {
@@ -11,7 +12,8 @@ class HoaxFeed extends React.Component{
         isLoadingHoaxes : false,
         newHoaxCount : 0,
         isLoadingOldHoaxes: false,
-        isLoadingNewHoaxes : false
+        isLoadingNewHoaxes : false,
+        isDeletingHoax: false
     };
     componentDidMount(){
         this.setState({ isLoadingHoaxes: true});
@@ -106,6 +108,22 @@ class HoaxFeed extends React.Component{
              this.setState({ isLoadingNewHoaxes: false});
         });
     }
+    onClickDeleteHoax = (hoax) => {
+        this.setState({hoaxToBeDeleted: hoax})
+    }
+    onClickModalCancel = () => {
+        this.setState({hoaxToBeDeleted:undefined})
+    }
+    onClickModalOk = () => {
+        this.setState({isDeletingHoax: true})
+        apiCalls.deleteHoax(this.state.hoaxToBeDeleted.id).then((response) => {
+            const page = { ...this.state.page };
+            page.content = page.content.filter(
+                (hoax) => hoax.id !== this.state.hoaxToBeDeleted.id
+            );
+            this.setState({ hoaxToBeDeleted: undefined, page,isDeletingHoax: false});
+        });
+    }
     render(){
         if(this.state.isLoadingHoaxes){
             return (
@@ -144,7 +162,9 @@ class HoaxFeed extends React.Component{
             {content.map((hoax) => {
                 return (
                  <div className="mb-4">
-                 <HoaxView key={hoax.id} hoax={hoax} />
+                 <HoaxView key={hoax.id}
+                           hoax={hoax}
+                           onClickDelete={()=>this.onClickDeleteHoax(hoax)}/>
                  </div>);
             })}
             {this.state.page && this.state.page.last === false &&
@@ -155,6 +175,17 @@ class HoaxFeed extends React.Component{
                >
                 {this.state.isLoadingOldHoaxes ? <Spinner/> : 'Load More'}
             </div>}
+            <Modal visible={this.state.hoaxToBeDeleted && true}
+                   onClickCancel={this.onClickModalCancel}
+                   body={
+                      this.state.hoaxToBeDeleted &&
+                      `Are you sure to delete '${this.state.hoaxToBeDeleted.content}'?`
+                    }
+                    title="Delete!"
+                    okButton = "Delete Hoax"
+                    onClickOk={this.onClickModalOk}
+                    pendingApiCall= {this.state.isDeletingHoax}
+            />
         </div>
         );
     }

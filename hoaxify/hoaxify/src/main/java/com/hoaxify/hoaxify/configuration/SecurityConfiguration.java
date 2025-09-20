@@ -3,7 +3,6 @@ package com.hoaxify.hoaxify.configuration;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpMethod;
-import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
@@ -26,6 +25,7 @@ public class SecurityConfiguration{
 	            .requestMatchers(AntPathRequestMatcher.antMatcher(HttpMethod.POST, "/api/1.0/login")).authenticated()
 	            .requestMatchers(AntPathRequestMatcher.antMatcher(HttpMethod.PUT, "/api/1.0/users/{id:[0-9]+}")).authenticated()
 	            .requestMatchers(AntPathRequestMatcher.antMatcher(HttpMethod.POST, "/api/1.0/hoaxes/**")).authenticated()
+	            .requestMatchers(AntPathRequestMatcher.antMatcher(HttpMethod.DELETE, "/api/1.0/hoaxes/{id:[0-9]+}")).authenticated()
 	            .anyRequest().permitAll()
 	        );
 	       // http.httpBasic(Customizer.withDefaults());
