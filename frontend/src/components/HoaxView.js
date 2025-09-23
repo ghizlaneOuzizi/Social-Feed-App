@@ -24,7 +24,7 @@ class HoaxView extends Component {
           image={image}/>
           <div className='flex-fill m-auto pl-2'>
             <Link to={`/${username}`} className="list-group-item-action">
-              <h6 className='d-inline'>
+              <h6 className='d-inline ms-2'>
                {displayName}&{username}
               </h6>
             </Link>
@@ -40,7 +40,7 @@ class HoaxView extends Component {
             </button>
           )}
         </div>
-        <div className='pl-5'>{hoax.content}</div>
+        <div className='ps-5 mb-2 shadow-none p-2 bg-light rounded'>{hoax.content}</div>
          {attachmentImageVisible && (
          <div className="pl-5">
            <img

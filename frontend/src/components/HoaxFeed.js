@@ -161,7 +161,7 @@ class HoaxFeed extends React.Component{
             )}
             {content.map((hoax) => {
                 return (
-                 <div className="mb-4">
+                 <div className="mb-2">
                  <HoaxView key={hoax.id}
                            hoax={hoax}
                            onClickDelete={()=>this.onClickDeleteHoax(hoax)}/>

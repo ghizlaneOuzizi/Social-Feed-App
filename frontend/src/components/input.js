@@ -10,10 +10,10 @@ const Input = (props) => {
         inputClassName += props.hasError ? ' is-invalid' : ' is-valid'
     }
     return (
-        <div>
-            {props.label && <label>{props.label}</label>}
+        <div className="mb-3">
+            {props.label && <label className="form-label fw-semibold">{props.label}</label>}
             <input
-             className={inputClassName}
+             className={`form-control shadow-sm ${inputClassName}`}
              type={props.type || 'text'}
              placeholder={props.placeholder}
              value={props.value}

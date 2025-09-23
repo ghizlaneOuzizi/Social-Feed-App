@@ -39,7 +39,7 @@ class UserList extends React.Component{
     render() {
      return (
       <div className="card">
-        <h3 className="card-title m-auto">Users</h3>
+        <h3 className="card-title m-auto card-body">Users</h3>
         <div className="list-group list-group-flush" data-testid="usergroup">
           {
             this.state.page.content.map((user) => {
@@ -47,11 +47,11 @@ class UserList extends React.Component{
             })
           }
         </div>
-        <div className="clearfix">
-           { !this.state.page.first && (<span className="badge bg-dark" style={{cursor: 'pointer'}} onClick={this.onClickPrevious}>
+        <div className="clearfix mt-1 p-1">
+           { !this.state.page.first && (<span className="btn btn-dark btn-sm rounded-pill" style={{cursor: 'pointer'}} onClick={this.onClickPrevious}>
              previous
           </span>)}
-          { !this.state.page.last && (<span className="badge bg-dark float-end" style={{cursor: 'pointer'}} onClick={this.onClickNext}>
+          { !this.state.page.last && (<span className="btn btn-dark btn-sm rounded-pill shadow-sm float-end" style={{cursor: 'pointer'}} onClick={this.onClickNext}>
              next
           </span>)}
         </div>

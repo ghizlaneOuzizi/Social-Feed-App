@@ -13,7 +13,9 @@ const UserListItem = (props) => {
              height="32"
              image = {props.user.image}
            />
-           {`${props.user.displayName}@${props.user.username}`}
+           <span className="ms-2">
+              {`${props.user.displayName}@${props.user.username}`}
+           </span>
         </Link>
     )
 }
