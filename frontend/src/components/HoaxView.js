@@ -40,7 +40,7 @@ class HoaxView extends Component {
             </button>
           )}
         </div>
-        <div className='ps-5 mb-2 shadow-none p-2 bg-light rounded'>{hoax.content}</div>
+        <div className='ps-5 mb-2'>{hoax.content}</div>
          {attachmentImageVisible && (
          <div className="pl-5">
            <img

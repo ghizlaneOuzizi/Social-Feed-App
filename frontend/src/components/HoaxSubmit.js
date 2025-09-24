@@ -103,7 +103,7 @@ class HoaxSubmit extends Component {
               />
               <div className="flex-fill">
                  <textarea
-                  className = {textAreaClassName}
+                  className = {`shadow-none p-2 bg-light rounded ${textAreaClassName}`}
                   rows={this.state.focused ? 3 : 1}
                   onFocus={this.onFocus}
                   value={this.state.content}
@@ -115,7 +115,7 @@ class HoaxSubmit extends Component {
                     </span>
                  )}
                 { this.state.focused &&
-                 <div>
+                 <div className="mt-2">
                     <div className="file">
                        <Input type = "file" onChange={this.onFileSelect}/>
                        {this.state.image && (
