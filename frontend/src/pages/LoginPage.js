@@ -1,44 +1,49 @@
-import React from "react";
+import React , { useState, useEffect } from "react";
 import Input from '../components/input'
 import ButtonWithProgress from "../components/ButtonWithProgress";
 import { connect } from "react-redux";
 import * as authActions from "../redux/authActions"
-export class LoginPage extends React.Component{
-    state = {
-        username: '',
-        password:'',
-        apiError: undefined,
-        pendingApiCall: false
-    };
-    onChangeUsername = (event) => {
+export const LoginPage = (props) => {
+    const [username, setUsername] = useState('');
+    const [password, setPassword] = useState('');
+    const [apiError, setApiError] = useState();
+    const [pendingApiCall, setPendingApiCall] = useState(false);
+    //state = {
+    //    username: '',
+    //    password:'',
+    //    apiError: undefined,
+    //    pendingApiCall: false
+    //};
+    const onChangeUsername = (event) => {
         const value = event.target.value;
-        this.setState({
-            username: value,
-            apiError: undefined
-        })
+        setUsername(value);
+        setApiError();
+        //this.setState({
+        //    username: value,
+        //    apiError: undefined
+        //})
     };
-    onChangePassword = (event) => {
+    const onChangePassword = (event) => {
         const value = event.target.value;
-        this.setState({
-            password: value,
-            apiError: undefined
-        })
+        setPassword(value);
+        setApiError();
+        //this.setState({
+        //    password: value,
+        //    apiError: undefined
+        //})
     };
 
-    onClickLogin = () => {
+    const onClickLogin = () => {
         const body = {
-            username: this.state.username,
-            password: this.state.password
+            username: username,
+            password: password
         };
-        this.setState({pendingApiCall : true})
-        this.props.actions
+        setPendingApiCall(true);
+        props.actions
         .postLogin(body)
-        .then(() => {
-            this.setState({pendingApiCall:false},
-            () => {
-                this.props.history.push('/');
-            }
-            );
+        .then((response) => {
+            setPendingApiCall(false);
+            props.history.push('/');
         })
         .catch(error => {
             if(error.response) {
@@ -47,10 +52,8 @@ export class LoginPage extends React.Component{
         });
     }
 
-    render(){
         let disableSubmit = false;
-
-        if(this.state.username === '' || this.state.password === ''){
+        if( username === '' || password === ''){
             disableSubmit = true;
         }
         return (
@@ -59,34 +62,33 @@ export class LoginPage extends React.Component{
                 <div className="col-12 mb-3">
                     <Input label="Username"
                            placeholder = "Your username"
-                           value={this.state.username}
-                           onChange={this.onChangeUsername} />
+                           value={username}
+                           onChange={onChangeUsername} />
                 </div>
 
                 <div className="col-12 mb-3">
                     <Input label="Password"
                            placeholder = "Your password"
                            type="password"
-                           value={this.state.password}
-                           onChange={this.onChangePassword}/>
+                           value={password}
+                           onChange={onChangePassword}/>
                 </div>
-                {this.state.apiError && (
+                { apiError && (
                     <div className="col-12 mb-3">
-                        <div className="alert alert-danger">{this.state.apiError}</div>
+                        <div className="alert alert-danger">{apiError}</div>
                     </div>
                 )}
                 <div className="text-center">
                     <ButtonWithProgress
-                    onClick={this.onClickLogin}
-                    disabled={disableSubmit || this.state.pendingApiCall}
+                    onClick={onClickLogin}
+                    disabled={disableSubmit || pendingApiCall}
                     text="Login"
-                    pendingApiCall={this.state.pendingApiCall}
+                    pendingApiCall={pendingApiCall}
                     />
                 </div>
             </div>
         );
     }
-}
 
 LoginPage.defaultProps = {
     actions: {
